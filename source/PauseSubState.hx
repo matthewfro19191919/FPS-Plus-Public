@@ -31,6 +31,7 @@ class PauseSubState extends MusicBeatSubstate
 
 	var songName:FlxTextExt;
 	var songArtist:FlxTextExt;
+	var botplayText:FlxText;
 
 	override function create():Void{
 
@@ -104,6 +105,14 @@ class PauseSubState extends MusicBeatSubstate
 			FlxTween.tween(songName, {alpha: 1, y: songName.y + distance}, 0.6, {ease: FlxEase.quartOut});
 			FlxTween.tween(songArtist, {alpha: 1, y: songArtist.y + distance}, 0.6, {ease: FlxEase.quartOut, startDelay: 0.25});
 
+			botplayText = new FlxText(20, FlxG.height - 40, 0, "BOTPLAY", 32);
+        		botplayText.scrollFactor.set();
+	        	botplayText.setFormat(Paths.font('vcr.ttf'), 32);
+         		botplayText.x = FlxG.width - (botplayText.width + 20);
+	        	botplayText.updateHitbox();
+         		botplayText.visible = PlayState.autoplay;
+	        	add(botplayText);
+
 			add(songName);
 			add(songArtist);
 		}
@@ -174,6 +183,8 @@ class PauseSubState extends MusicBeatSubstate
 						pauseMusic.fadeOut(0.5, 0);
 						FlxG.sound.play(Paths.sound('scrollMenu'), 0.8);
 	
+					case "Auto Play":
+						PlayState.autoplay = !PlayState.autoplay;
 					case "Chart Editor":
 						PlayState.instance.tweenManager.clear();
 						PlayState.instance.switchState(new ChartingState());
