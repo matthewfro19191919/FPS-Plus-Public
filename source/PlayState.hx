@@ -238,6 +238,8 @@ class PlayState extends MusicBeatState
 
 	public var scoreTxt:FlxTextExt;
 
+	public var botplayText:FlxText;
+
 	public var ccText:SongCaptions;
 
 	public var songStats:ScoreStats = {
@@ -652,6 +654,14 @@ class PlayState extends MusicBeatState
 		healthBar.createFilledBar(dad.characterColor, boyfriend.characterColor);
 		healthBar.antialiasing = true;
 		// healthBar
+		
+		botplayText = new FlxText(20, FlxG.height - 40, 0, "BOTPLAY", 32);
+        	botplayText.scrollFactor.set();
+        	botplayText.setFormat(Paths.font('vcr.ttf'), 32);
+         	botplayText.x = FlxG.width - (botplayText.width + 20);
+	    	botplayText.updateHitbox();
+ 		botplayText.visible = !autoplay;
+	      	add(botplayText);
 		
 		scoreTxt = new FlxTextExt(healthBarBG.x - 105, (FlxG.height * 0.9) + 36, 800, "", 22);
 		scoreTxt.setFormat(Paths.font("vcr"), 22, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
