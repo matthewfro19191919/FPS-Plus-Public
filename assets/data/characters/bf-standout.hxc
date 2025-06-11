@@ -1,0 +1,63 @@
+var bounds:FlxObject;
+
+function onCreatePost() {
+	// partner select code
+	if (inPartnerSelect) {
+		// custom bounds since graphic bounds include blank space
+		bounds = new FlxObject(character.x + 100, character.y + 75, character.width - 100, character.height - 50);
+		game.subState.add(bounds);
+		FlxG.mouse.visible = true; // have mouse visible only for standout
+	}
+}
+
+function onUpdate() {
+	// bf was clicked
+	if (inPartnerSelect && FlxG.mouse.overlaps(bounds) && FlxG.mouse.justPressed) {
+		var lol = new FlxSprite().makeGraphic(1, 1);
+		lol.scale.set(FlxG.width, FlxG.height);
+		lol.updateHitbox();
+		character.color = FlxColor.BLACK;
+		if (ClientPrefs.flashing)
+			game.subState.insert(game.subState.members.indexOf(character), lol);
+		var sound = FlxG.sound.play(Paths.sound('fnf_loss_sfx'));
+		sound.endTime = 900; // dont include mic drop part
+
+		game.subState.canSelectToPreventSpammingAndErrors = true;
+		new FlxTimer().start(1 / 24, _ -> {
+			game.subState.canSelectToPreventSpammingAndErrors = false;
+			lol.destroy();
+			game.subState.reloadPartner('bf-periodic'); // change partner and setting character id
+			game.subState.curSettings.partnerInGame = 'bf-periodic';
+			
+			// make little impact
+			var impact = new FlxSprite(FlxG.mouse.viewX, FlxG.mouse.viewY);
+			impact.frames = Paths.getFrames('impact');
+			impact.animation.addByPrefix('blam', 'blam', 24, false);
+			impact.animation.play('blam');
+			impact.animation.onFinish.add(_ -> game.pendingDestroy.push(impact));
+			impact.x -= impact.width * .5;
+			impact.y -= impact.height * .5;
+	
+			// new var easy way to check if characters been changed before shaking completed
+			var blud = game.subState.partner;
+			game.subState.insert(999, impact); // wow thanks
+			new FlxTimer().start(1 / 24, t -> {
+				if (blud.exists) {
+					blud.updateHitbox();
+					blud.offset.x += FlxG.random.float(-3, 3);
+					blud.offset.y += FlxG.random.float(-3, 3);
+				} else {
+					t.cancel();
+					impact.destroy();
+				}
+			}, 6);
+		});
+	}
+}
+
+function onDestroy() {
+	bounds.destroy();
+	game.subState.remove(bounds);
+	FlxG.mouse.visible = false;
+	inPartnerSelect = false;
+}
