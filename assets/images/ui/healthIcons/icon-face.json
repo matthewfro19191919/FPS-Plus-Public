@@ -1,0 +1,31 @@
+{
+	"offsets": {
+		"upscroll": {
+			"idle": [
+				0,
+				-30
+			],
+			"lose": [
+				"6",
+				"-29"
+			]
+		},
+		"downscroll": {
+			"idle": [
+				0,
+				30
+			],
+			"lose": [
+				6,
+				29
+			]
+		}
+	},
+	"FPS": 24,
+	"doBump": true,
+	"Scale": 1,
+	"globalOffset": [
+		-25,
+		0
+	]
+}
