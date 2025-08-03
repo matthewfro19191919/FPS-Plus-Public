@@ -180,7 +180,7 @@ class PlayState extends MusicBeatState
 
 	//End of wacky input stuff===================
 
-	private var autoplay:Bool = false;
+	public var autoplay:Bool = false;
 	public var preventScoreSaving:Bool = false;
 
 	public var notes:FlxTypedGroup<Note>;
