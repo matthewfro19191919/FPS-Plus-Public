@@ -31,7 +31,6 @@ class PauseSubState extends MusicBeatSubstate
 
 	var songName:FlxTextExt;
 	var songArtist:FlxTextExt;
-	var botplayText:FlxText;
 
 	override function create():Void{
 
@@ -174,6 +173,7 @@ class PauseSubState extends MusicBeatSubstate
 						}
 						pauseMusic.fadeOut(0.5, 0);
 						FlxG.sound.play(Paths.sound('scrollMenu'), 0.8);
+	
 					case "Chart Editor":
 						PlayState.instance.tweenManager.clear();
 						PlayState.instance.switchState(new ChartingState());
