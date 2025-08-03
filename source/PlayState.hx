@@ -1579,7 +1579,7 @@ class PlayState extends MusicBeatState
 		 	}
 		}
 		
-		if(FlxG.keys.pressed.SHIFT && FlxG.keys.justPressed.TAB && !isStoryMode){
+		if(FlxG.keys.pressed.SHIFT){
 			autoplay = !autoplay;
 			preventScoreSaving = true;
 		}
