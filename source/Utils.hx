@@ -1,32 +1,34 @@
 package;
 
-import flixel.tweens.FlxEase;
+import flixel.FlxBasic;
+import flixel.sound.FlxSound;
 import caching.AudioCache;
-import modding.PolymodHandler;
+import flixel.FlxG;
+import flixel.FlxObject;
+import flixel.FlxSprite;
 import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.input.keyboard.FlxKey;
-import flixel.util.FlxColor;
-import flixel.FlxObject;
-import flixel.math.FlxPoint;
-import flixel.FlxSprite;
-import sys.io.File;
-import sys.FileSystem;
 import flixel.math.FlxMath;
-import flixel.FlxG;
-import openfl.utils.Assets;
-import openfl.system.System;
-
+import flixel.math.FlxPoint;
+import flixel.tweens.FlxEase;
+import flixel.util.FlxColor;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import haxe.macro.Type;
+import modding.PolymodHandler;
+import openfl.system.System;
+import openfl.utils.Assets;
+import sys.FileSystem;
+import sys.io.File;
+
+using Lambda;
+using StringTools;
 #if yaml
-import yaml.Yaml;
 import yaml.Parser;
 import yaml.Renderer;
+import yaml.Yaml;
 import yaml.util.ObjectMap;
 #end
-using StringTools;
-using Lambda;
 
 class Utils
 {
@@ -142,10 +144,9 @@ class Utils
 		return Assets.getText(path);
 	}
 
-	public static function clamp(v:Float, min:Float, max:Float):Float {
-		if(v < min) { v = min; }
-		if(v > max) { v = max; }
-		return v;
+	@:noCompletion
+	public static inline function clamp(v:Float, min:Float, max:Float):Float {
+		return FlxMath.bound(v, min, max);
 	}
 
 	public static function worldToLocal(object:FlxObject, x:Float, y:Float):FlxPoint{
@@ -173,11 +174,12 @@ class Utils
 
 	//FileSystem readDirectory but with mods folder
 	public static inline function readDirectory(path:String):Array<String>{
-		var files:Array<String> = null;
-		if(FileSystem.exists(path)){ files = FileSystem.readDirectory(path); }
+		var files:Array<String> = [];
+		path = path.replace("assets/", PolymodHandler.ASSETS_FOLDER + "/");
+
+		if(FileSystem.exists(path)){files = FileSystem.readDirectory(path);}
 		for (mod in PolymodHandler.loadedModDirs){
 			if (FileSystem.exists('mods/$mod/' + path.split("assets/")[1])){
-				if(files == null){ files = []; }
 				var modfile = FileSystem.readDirectory('mods/$mod/' + path.split("assets/")[1]);
 				for (file in modfile){
 					if (!files.contains(file)){
@@ -189,8 +191,7 @@ class Utils
 		return files;
 	}
 
-	public static inline function listEveryFileInFolder(folder:String, postfix:String)
-	{
+	public static inline function listEveryFileInFolder(folder:String, postfix:String){
 		var last:Array<String> = [];
 		var assets = Assets.list();
 		for (file in assets){
@@ -218,7 +219,7 @@ class Utils
 
 	//Flixel 5.9.0 changed how animation callbacks are called so destroying an object in one of them will cause a null object reference. This is a fix for that.
 	//Sets up an object to be destroyed after the update loop is finished being processed.
-	public static inline function destroyWhenAvailable(obj:FlxObject):Void{
+	public static inline function destroyWhenAvailable(obj:FlxBasic):Void{
 		FlxG.signals.postUpdate.addOnce(function(){ obj.destroy(); });
 	}
 
@@ -236,12 +237,19 @@ class Utils
 		return r;
 	}
 
+	public static function createPausedSound(EmbeddedSound:String, Looped:Bool = false, AutoDestroy:Bool = false, ?OnComplete:Null<() -> Void>):FlxSound{
+		var sound = new FlxSound().loadEmbedded(EmbeddedSound, Looped, AutoDestroy, OnComplete);
+		FlxG.sound.list.add(sound);
+		return sound;
+	}
+
 	public static inline function defaultSongMetadata(_name:String):Dynamic{
 		return {
 			name: _name,
 			artist: "",
 			album: "none",
 			difficulties: [0, 0, 0],
+			difficultySet: "standard",
 			dadBeats: [0, 2],
 			bfBeats: [1, 3],
 			compatableInsts: [],

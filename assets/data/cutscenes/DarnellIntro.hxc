@@ -1,6 +1,7 @@
 import flixel.math.FlxPoint;
 import flixel.FlxG;
 import flixel.tweens.FlxEase;
+import flixel.sound.FlxSound;
 
 class DarnellIntro extends ScriptedCutscene
 {
@@ -11,6 +12,8 @@ class DarnellIntro extends ScriptedCutscene
 	var picoPos:FlxPoint;
 	var nenePos:FlxPoint;
 	var darnellPos:FlxPoint;
+
+	var cutsceneAudio:FlxSound;
 
 	var originalZoom:Float;
 	
@@ -35,6 +38,8 @@ class DarnellIntro extends ScriptedCutscene
 			}
 		}
 
+		cutsceneAudio = Utils.createPausedSound(Paths.music("weekend1/darnellCanCutscene"));
+
 		addEvent(0, first);
 		addEvent(2, zoomOut);
 		addEvent(beatTime * 12, darnellLight);
@@ -49,9 +54,9 @@ class DarnellIntro extends ScriptedCutscene
 	}
 
 	function first() {
-		FlxG.sound.play(Paths.music("weekend1/darnellCanCutscene"));
+		cutsceneAudio.play();
 
-		playstate.camHUD.visible = false;
+		playstate.hudShader.alpha = 0;
 		playstate.camGame.fade(0xFF000000, 2, true);
 
 		addToCharacterLayer(picoIntro);
@@ -68,8 +73,7 @@ class DarnellIntro extends ScriptedCutscene
 	}
 
 	function startSong() {
-		playstate.startCountdown();
-		playstate.camHUD.visible = true;
+		next();
 		playstate.camChangeZoom(originalZoom, 2, FlxEase.sineInOut);
 		playstate.camMove(darnellPos.x, darnellPos.y, 2, FlxEase.sineInOut, "dad");
 	}

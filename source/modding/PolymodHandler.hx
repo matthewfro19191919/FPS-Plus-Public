@@ -15,6 +15,15 @@ class PolymodHandler
 
 	public static final API_VERSION:Array<Int> = [1, 6, 0];
 	public static final API_VERSION_STRING:String = API_VERSION[0]+"."+API_VERSION[1]+"."+API_VERSION[2];
+
+	public static final ASSETS_FOLDER:String =
+    #if (REDIRECT_ASSETS_FOLDER && macos)
+    "../../../../../../../assets"
+    #elseif REDIRECT_ASSETS_FOLDER
+    "../../../../assets"
+    #else
+    "assets"
+    #end;
 	
 	public static var allModDirs:Array<String>;
 	public static var disabledModDirs:Array<String>;
@@ -48,6 +57,9 @@ class PolymodHandler
 			useScriptedClasses: true,
 			errorCallback: onPolymodError,
 			ignoredFiles: buildIgnoreList(),
+			frameworkParams: {
+				coreAssetRedirect: ASSETS_FOLDER
+			}
 		});
 
 		//trace("Mod Meta List: " + loadedModMetadata);
@@ -263,6 +275,7 @@ class PolymodHandler
 		Polymod.addDefaultImport(debug.ChartingState);
 		
 		Polymod.addDefaultImport(modding.ScriptingUtil);
+		Polymod.addDefaultImport(modding.ReflectUtil);
 		Polymod.addDefaultImport(modding.ScriptingUtil.BlendMode);
 		Polymod.addDefaultImport(modding.ScriptingUtil.FlxTextBorderStyle);
 		Polymod.addDefaultImport(modding.ScriptingUtil.FlxTweenType);
@@ -296,6 +309,10 @@ class PolymodHandler
 		Polymod.addDefaultImport(flixel.group.FlxSpriteGroup);
 		
 		Polymod.addDefaultImport(flixel.system.FlxAssets.FlxShader);
+
+		Polymod.addDefaultImport(openfl.display.Sprite);
+
+		Polymod.addDefaultImport(transition.BaseTransition);
 		
 		//Alias
 		Polymod.addImportAlias("Binds", modding.ScriptingUtil.ScriptBinds);

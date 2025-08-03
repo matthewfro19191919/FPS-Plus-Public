@@ -27,6 +27,9 @@ class ScriptedCutscene extends FlxBasic
 			if(events.length > 0){
 				totalTime += elapsed;
 			}
+			else{
+				Utils.destroyWhenAvailable(this);
+			}
 			
 			for(event in events){
 				if(event[0] > totalTime){ break; }
@@ -44,8 +47,6 @@ class ScriptedCutscene extends FlxBasic
 	 * Starts the cutscene.
 	 */
 	public function start():Void{
-		__started = true;
-		
 		for(event in events){
 			if(event[0] > 0){ break; }
 			else{
@@ -55,6 +56,7 @@ class ScriptedCutscene extends FlxBasic
 				events.remove(event);
 			}
 		}
+		__started = true;
 	}
 
 	/**
@@ -204,8 +206,7 @@ class ScriptedCutscene extends FlxBasic
 				PlayState.instance.instantStart();
 			}
 			if(doCamFadeIn){
-				playstate.hudShader.alpha = 0;
-				tween.tween(playstate.hudShader, {alpha: 1}, 0.3);
+				fadeInHud();
 			}
 		}  
 	}
@@ -214,6 +215,18 @@ class ScriptedCutscene extends FlxBasic
 		if(_ease == null){_ease = FlxEase.expoOut;}
 		if(PlayState.SONG.notes[0].mustHitSection){ PlayState.instance.camFocusBF(0, 0, _time, _ease); }
 		else{ PlayState.instance.camFocusOpponent(0, 0, _time, _ease); }
+	}
+
+	public function fadeInHud():Void{
+		tween.cancelTweensOf(playstate.hudShader);
+		playstate.hudShader.alpha = 0;
+		tween.tween(playstate.hudShader, {alpha: 1}, 0.3);
+	}
+
+	public function fadeOutHud():Void{
+		tween.cancelTweensOf(playstate.hudShader);
+		playstate.hudShader.alpha = 1;
+		tween.tween(playstate.hudShader, {alpha: 0}, 0.3);
 	}
 
 	function get_started():Bool{ return __started; }

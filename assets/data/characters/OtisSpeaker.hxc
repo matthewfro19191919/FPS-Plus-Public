@@ -38,7 +38,7 @@ class OtisSpeaker extends CharacterInfoBase
 		info.functions.songEnd = songEnd;
 		info.functions.applyShader = applyShader;
 
-		addExtraData("reposition", [-54.5, -250]);
+		addExtraData("reposition", [-30, -275]);
 	}
 
 	var abot:ABot;
@@ -68,7 +68,7 @@ class OtisSpeaker extends CharacterInfoBase
 		addToCharacter(gunshots);
 	}
 
-	function update(character:Character, elpased:Float):Void{
+	function update(character:Character, elapsed:Float):Void{
 		if(TankmenBG.animationNotes.length > 0){
 			if(Conductor.songPosition > TankmenBG.animationNotes[0][0]){
 				character.playAnim('shoot' + (TankmenBG.animationNotes[0][1] + 1), true);
